@@ -91,4 +91,23 @@ if ($request->destination) {
 
         return $pdf->download('mouvements_filtrés.pdf');
     }
+
+     public function exportSinglePDF($id)
+ {
+ // Récupérer le mouvement avec son produit associé
+ $mouvement = Mouvement::with('produit')->findOrFail($id);
+
+ // Vérifier que le mouvement est une sortie
+ if ($mouvement->type !== 'sortie') {
+ return redirect()->back()->with('error', 'Ce mouvement n\'est pas une sortie.');
+ }
+
+ // Générer le PDF en passant une collection contenant uniquement ce mouvement
+ $mouvements = collect([$mouvement]);
+ $produit = $mouvement->produit;
+
+ $pdf = PDF::loadView('mouvements.pdf_sortie', compact('mouvements', 'produit'));
+
+ return $pdf->download('mouvement_sortie_' . $mouvement->id . '.pdf');
+ }
 }
