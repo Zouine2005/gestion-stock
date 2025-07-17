@@ -90,9 +90,9 @@
         </form>
     </div>
 </div>
+ &nbsp; &nbsp; &nbsp; &nbsp;
 
-
-      <div class="mb-3 d-flex justify-content-end gap-2">
+      <div class="mb-3 d-flex justify-content-end gap-3">
     <!-- Export PDF avec filtres actuels -->
     <a href="{{ route('mouvements.export.pdf', request()->query()) }}" 
        class="btn btn-outline-danger d-flex align-items-center gap-2">
@@ -107,43 +107,55 @@
 </div>
 
 
-        <!-- Table -->
-        <div class="table-responsive shadow-sm animate-table">
-            <table class="table table-hover table-bordered align-middle">
-                <thead class="table-dark text-center">
-                    <tr>
-                        <th scope="col">Numero_inventaire</th>
-                        <th scope="col">Produit</th>
-                        <th scope="col">Type</th>
-                        <th scope="col">Quantité</th>
-                        <th scope="col">Date</th>
-                        <th scope="col">Motif</th>
-                        <th scope="col">Destination</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($mouvements as $mouvement)
-                        <tr class="animate-row">
-                            <td>{{ $mouvement->produit ? $mouvement->produit->numero_inventaire : '-' }}</td>
-                            <td>{{ $mouvement->produit ? $mouvement->produit->designation : '-' }}</td>
-                            <td class="text-center">
-                                <span class="badge rounded-pill {{ $mouvement->type === 'entrée' ? 'bg-success' : 'bg-danger' }}">
-                                    {{ ucfirst($mouvement->type) }}
-                                </span>
-                            </td>
-                            <td class="text-center">{{ $mouvement->quantite }}</td>
-                            <td class="text-center">{{ \Carbon\Carbon::parse($mouvement->date_mouvement)->format('d/m/Y') }}</td>
-                            <td>{{ $mouvement->motif ?? '-' }}</td>
-                            <td>{{ $mouvement->destination ?? '-' }}</td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="6" class="text-center text-muted">Aucun mouvement trouvé</td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
+       <!-- Dans la section <table> existante -->
+
+<div class="table-responsive shadow-sm animate-table">
+    <table class="table table-hover table-bordered align-middle">
+        <thead class="table-dark text-center">
+            <tr>
+                <th scope="col">Numero_inventaire</th>
+                <th scope="col">Produit</th>
+                <th scope="col">Type</th>
+                <th scope="col">Quantité</th>
+                <th scope="col">Date</th>
+                <th scope="col">Motif</th>
+                <th scope="col">Destination</th>
+                <th scope="col">Actions</th> <!-- Nouvelle colonne -->
+            </tr>
+        </thead>
+        <tbody>
+            @forelse($mouvements as $mouvement)
+                <tr class="animate-row">
+                    <td>{{ $mouvement->produit ? $mouvement->produit->numero_inventaire : '-' }}</td>
+                    <td>{{ $mouvement->produit ? $mouvement->produit->designation : '-' }}</td>
+                    <td class="text-center">
+                        <span class="badge rounded-pill {{ $mouvement->type === 'entrée' ? 'bg-success' : 'bg-danger' }}">
+                            {{ ucfirst($mouvement->type) }}
+                        </span>
+                    </td>
+                    <td class="text-center">{{ $mouvement->quantite }}</td>
+                    <td class="text-center">{{ \Carbon\Carbon::parse($mouvement->date_mouvement)->format('d/m/Y') }}</td>
+                    <td>{{ $mouvement->motif ?? '-' }}</td>
+                    <td>{{ $mouvement->destination ?? '-' }}</td>
+                    <td class="text-center">
+                        @if($mouvement->type === 'sortie')
+                            <a href="{{ route('mouvements.export.pdf.single', $mouvement->id) }}" 
+                               class="btn btn-sm btn-outline-danger d-flex align-items-center gap-2 justify-content-center mx-auto">
+                                <i class="bi bi-file-earmark-pdf"></i> PDF
+                            </a>
+                        @else
+                            <span>-</span>
+                        @endif
+                    </td>
+                </tr>
+            @empty
+                <tr>
+                    <td colspan="8" class="text-center text-muted">Aucun mouvement trouvé</td>
+                </tr>
+            @endforelse
+        </tbody>
+    </table>
+</div>
 <div class="d-flex justify-content-center mt-4">
     {{ $mouvements->links() }}
 </div>

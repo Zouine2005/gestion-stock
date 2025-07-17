@@ -61,6 +61,7 @@ Route::get('/mouvements/export/pdf', [MouvementController::class, 'exportAll'])-
 
 
 Route::get('/mouvements/export/pdf', [MouvementController::class, 'exportFilteredPDF'])->name('mouvements.export.pdf');
+Route::get('/mouvements/export/pdf/single/{mouvement}', [MouvementController::class, 'exportSinglePDF'])->name('mouvements.export.pdf.single');
 
 
 
